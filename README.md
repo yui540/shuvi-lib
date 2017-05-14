@@ -27,7 +27,7 @@ npm install shuvi-lib
 三つ目は、私、yuki540のサーバー経由でネットワーク越しにプロジェクトに取り込む方法です。
 
 ```javascript
-<script src="api.yuki540.com/shuvi-lib/v0.0.1/shuvi.lib-js">
+<script src="api.yuki540.com/shuvi-lib/v0.0.1/shuvi.lib-js"></script>
 ```
 
 ## Usage
