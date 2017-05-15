@@ -24,10 +24,10 @@ npm install shuvi-lib
 
 のようにnpmコマンドを使ってプロジェクトに取り込む方法。
 
-三つ目は、私、yuki540のサーバー経由でネットワーク越しにプロジェクトに取り込む方法です。
+三つ目は、私、yuki540のサーバー経由でネットワーク越しにshuvi-libをプロジェクトに取り込む方法です。
 
 ```javascript
-<script src="http://api.yuki540.com/shuvi-lib/v0.0.1/shuvi.lib.js"></script>
+<script src="http://api.yuki540.com/shuvi-lib/v1/shuvi.lib.js"></script>
 ```
 
 ## Usage
@@ -35,32 +35,54 @@ shuvi-libを使えば、YouTube IFrame Player APIをより簡単に操作する�
 
 shuvi.lib.jsを取り込み、下記のようにパラメータを渡し、newすれば、すぐにプレイヤーの操作が可能になります。
 
-```javascript:demo.js
+```javascript
 let shuvi = new Shuvi({
-  video_id : 'fQN2WC_Acpg', // 動画ID
-  id       : 'player',      // 要素のID
-  width    : 500,           // 画面の幅
-  height   : 300            // 画面の高さ
+  video_id : ['fQN2WC_Acpg'], // 動画IDの入った配列
+  id       : 'player',        // 要素のID
+  width    : 500,             // 画面の幅
+  height   : 300,             // 画面の高さ
+  autoplay : ture             // [option]自動再生（デフォルトはtrue）
+  loop     : false            // [option]ループ（デフォルトはfalse）
 })
+```
+
+npm経由の方は、requireを忘れずに。
+```javascript
+const Shuvi = require('shuvi-lib')
 ```
 
 ## Methods
 shuvi-libは、できるだけシンプルでわかりやすいメソッド名にしています。
+
+#### 動画URLから動画IDの取得
+video_id = getId(url)
+- [param]url: YouTubeの動画URL
+- [return]video_id: 動画ID
 
 #### イベントリスナの追加
 shuvi.on(event, fn)
 - [param]event: イベント名
 - [param]fn: コールバック関数
 
-#### 動画の変更
-shuvi.change(video_id)
-- [param]video_id: 動画ID
+#### プレイリストの変更
+shuvi.setPlaylist(playlist)
+- [param]playlist: 動画IDの入った配列
 
 #### 再生
 shuvi.play()
 
 #### 停止
 shuvi.pause()
+
+#### 次の動画へ
+shuvi.next()
+
+#### 後ろの動画へ
+shuvi.back()
+
+#### プレイリスト内の指定の動画を選択
+shuvi.select(num)
+- [param]num: プレイリストの番号
 
 #### ループの有無
 shuvi.loop(bool)
@@ -96,11 +118,6 @@ shuvi.setVolume(volume)
 shuvi.resize(width, height)
 - [param]width: 画面の幅
 - [param]height: 画面の高さ
-
-#### 動画URLから動画IDの取得
-video_id = getId(url)
-- [param]url: YouTubeの動画URL
-- [return]video_id: 動画ID
 
 ## Events
 shuvi-libは、プレイヤーの動作ごと挙動をイベントとして呼び出されます。
