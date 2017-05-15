@@ -4,8 +4,8 @@ shuvi-libは、YouTube IFrame Player APIをゆるふわにラッピングした�
 ![shuvi-lib](./__sample__/shuvi-lib.jpg)
 
 - shuvi-libについての紹介ページ
-  - [Qiita - ]()
-  - [はてなブログ - ]()
+  - [Qiita - YouTube IFrame Player APIをゆるふわにラッピングしてみた。](http://qiita.com/yuki540/items/f75bd52a0ddabe9a06bd)
+  - [はてなブログ - YouTube IFrame Player APIをゆるふわにラッピングしてみた。](http://yuki540.hatenablog.jp/entry/2017/05/15/YouTube_IFrame_Player_API%E3%82%92%E3%82%86%E3%82%8B%E3%81%B5%E3%82%8F%E3%81%AB%E3%83%A9%E3%83%83%E3%83%94%E3%83%B3%E3%82%B0%E3%81%97%E3%81%A6%E3%81%BF%E3%81%9F%E3%80%82)
 - 開発者
   - yuki540
   - [Twitter - @eriri_jp](https://twitter.com/eriri_jp)
