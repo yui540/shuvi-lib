@@ -13,7 +13,7 @@
 class Shuvi
 	constructor: (params) ->
 		# info
-		@version = '1.0.0'
+		@version = '1.0.1'
 		@author  = 'yuki540'
 		@twitter = 'https://twitter.com/eriri_jp'
 		@github  = 'https://github.com/yuki540net/shuvi-lib'
@@ -55,6 +55,8 @@ class Shuvi
 		console.log '  - repository: ' + @github
 		console.log ''
 
+		return true
+
 	##
 	# scriptの埋め込み
 	##
@@ -65,6 +67,7 @@ class Shuvi
 
 		window.onYouTubeIframeAPIReady = =>
 			@render()
+			return true
 
 	##
 	# イベントの発火
