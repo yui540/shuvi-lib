@@ -1,7 +1,19 @@
+##
+#
+# shuvi-lib
+# YouTube IFrame Player APIをゆるふわにラッピングしたライブラリ
+#
+# @author     yuki540
+# @package    Shuvi
+# @twitter    @eriri_jp
+# @repository https://github.com/yuki540net/shuvi-lib
+# @license    MIT license
+#
+##
 class Shuvi
 	constructor: (params) ->
 		# info
-		@version = '0.0.1'
+		@version = '1.0.0'
 		@author  = 'yuki540'
 		@twitter = 'https://twitter.com/eriri_jp'
 		@github  = 'https://github.com/yuki540net/shuvi-lib'
@@ -11,6 +23,7 @@ class Shuvi
 		@id = params.id
 
 		# video_id
+		@number   = 0
 		@video_id = params.video_id
 
 		# size
@@ -18,10 +31,11 @@ class Shuvi
 		@height = params.height
 
 		# state
+		@autoplay  = params.autoplay || true
+		@_loop     = params.loop     || false
 		@first     = false
 		@load      = false
 		@timer     = null
-		@loop      = false
 		@listeners = []
 
 		# player object
@@ -50,7 +64,7 @@ class Shuvi
 		document.head.appendChild script
 
 		window.onYouTubeIframeAPIReady = =>
-			@render @video_id
+			@render()
 
 	##
 	# イベントの発火
@@ -75,17 +89,15 @@ class Shuvi
 
 	##
 	# 描画
-	# @param video_id : 動画ID
 	##
-	render: (video_id) ->
-		@video_id = video_id
+	render: ->
 		@player   = new YT.Player @id, {
 			width   : @width
 			height  : @height
-			videoId : video_id
+			videoId : @video_id[@number]
 			events  : {
-				onReady: @onReady
-				onError: @onError
+				onReady : @onReady
+				onError : @onError
 			}
 		}
 
@@ -95,12 +107,14 @@ class Shuvi
 	onReady: (e) =>
 		# 初回のみ
 		if not @first
-			@change @video_id
+			@change @video_id[@number]
 			@first = true
 			return
 
 		@load = true
-		@emit 'load', { video_id: @video_id }
+		if @autoplay
+			@play()
+		@emit 'load', { video_id: @video_id[@number] }
 
 	##
 	# 読み込み失敗
@@ -108,25 +122,71 @@ class Shuvi
 	onError: (e) =>
 		@load = false
 
-		@emit 'error', {
-			video_id: @video_id
-		}
+		@emit 'error', { video_id: @video_id[@number] }
 
 	##
 	# 動画の変更
 	# @param video_id : 動画ID
 	##
 	change: (video_id) ->
-		@load     = false
-		@video_id = video_id
+		@pause()
 
+		@load      = false
 		url1       = 'https://www.youtube.com/embed/'
 		url2       = '?enablejsapi=1&widgetid=1&controls=0&showinfo=0'
 		iframe     = document.getElementById @id
-		iframe.src = url1 + @video_id + url2
+		iframe.src = url1 + video_id + url2
 
 		if @first
-			@emit 'change', { video_id: @video_id }
+			@emit 'change', { video_id: video_id }
+
+	##
+	# プレイリストの設定
+	# @param playlist: 動画IDの入った配列
+	##
+	setPlaylist: (playlist) ->
+		@video_id = playlist
+		@number   = 0
+		@change @video_id[@number]
+		return true
+
+	##
+	# 次の動画
+	##
+	next: ->
+		if (@video_id.length - 1) <= @number
+			@number = 0
+		else 
+			@number += 1
+
+		@change @video_id[@number]
+		return true
+
+	##
+	# 前の動画
+	##
+	back: ->
+		if 0 >= @number
+			@number = @video_id.length - 1
+		else 
+			@number -= 1
+
+		@change @video_id[@number]
+		return true
+
+	##
+	# プレイリスト内の指定の動画を選択
+	# @param num : プレイリスト番号
+	##
+	select: (num) ->
+		num = parseInt num
+
+		if (@video_id.length - 1) >= num and 0 <= num
+			@number = num
+			@change @video_id[@number]
+			return true
+		else 
+			return false
 
 	##
 	# 再生
@@ -138,7 +198,7 @@ class Shuvi
 
 		# 再生
 		@player.playVideo()
-		@emit 'play', { video_id: @video_id }
+		@emit 'play', { video_id: @video_id[@number] }
 
 		# 再生監視
 		@timer = setInterval =>
@@ -147,19 +207,24 @@ class Shuvi
 
 			# 再生終了
 			if duration <= current
-				@emit 'end', {
-					video_id : @video_id
-					current  : current 
-					duration : duration
-					per      : current / duration
-				}
+				@emit 'end', { video_id: @video_id[@number] }
 
 				# ループ
-				if @loop
+				if @_loop
 					@seek 0
 
+				# 次の動画
+				else
+					if (@video_id.length - 1) <= @number
+						@number = 0
+					else
+						@number += 1
+
+					@change @video_id[@number]
+
+			# シーク
 			@emit 'seek', {
-				video_id : @video_id
+				video_id : @video_id[@number]
 				current  : current 
 				duration : duration
 				per      : current / duration
@@ -177,9 +242,8 @@ class Shuvi
 			return false
 		
 		@player.pauseVideo()
-		@emit 'pause', { video_id : @video_id }
+		@emit 'pause', { video_id: @video_id[@number] }
 		clearInterval @timer
-
 		return true
 
 	##
@@ -188,9 +252,9 @@ class Shuvi
 	##
 	loop: (bool) ->
 		if bool is true
-			@loop = true
+			@_loop = true
 		else
-			@loop = false
+			@_loop = false
 
 	##
 	# 移動
@@ -205,12 +269,11 @@ class Shuvi
 
 		@player.seekTo current
 		@emit 'seek', {
-			video_id : @video_id
+			video_id : @video_id[@number]
 			current  : current 
 			duration : duration
 			per      : current / duration
 		}
-
 		return true
 
 	##
@@ -239,7 +302,7 @@ class Shuvi
 	# @return volume
 	##
 	getVolume: ->
-		return @player.getVolume()
+		return @player.getVolume() / 100
 
 	##
 	# 音量の設定
@@ -250,7 +313,6 @@ class Shuvi
 			return false
 
 		@player.setVolume volume * 100
-
 		return true
 
 	##
@@ -267,6 +329,7 @@ class Shuvi
 			width  : @width
 			height : @height
 		}
+		return true
 
 	##
 	# 動画IDの取得
@@ -283,4 +346,6 @@ class Shuvi
 
 		return video_id
 
-
+try 
+	module.exports = Shuvi
+catch
