@@ -1,6 +1,6 @@
 {
   "name": "shuvi-lib",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "YouTube IFrame Player APIをゆるふわにラッピングしたライブラリ「shuvi-lib」",
   "main": "lib/shuvi.lib.js",
   "scripts": {

@@ -37,16 +37,17 @@ shuvi.lib.jsを取り込み、下記のようにパラメータを渡し、new�
 
 ```javascript
 let shuvi = new Shuvi({
-  video_id : ['fQN2WC_Acpg'], // 動画IDの入った配列
+  video_id : 'fQN2WC_Acpg',   // 動画ID
   id       : 'player',        // 要素のID
   width    : 500,             // 画面の幅
   height   : 300,             // 画面の高さ
-  autoplay : ture             // [option]自動再生（デフォルトはtrue）
+  autoplay : ture,            // [option]自動再生（デフォルトはtrue）
   loop     : false            // [option]ループ（デフォルトはfalse）
 })
 ```
 
 npm経由の方は、requireを忘れずに。
+
 ```javascript
 const Shuvi = require('shuvi-lib')
 ```
@@ -64,25 +65,19 @@ shuvi.on(event, fn)
 - [param]event: イベント名
 - [param]fn: コールバック関数
 
-#### プレイリストの変更
-shuvi.setPlaylist(playlist)
-- [param]playlist: 動画IDの入った配列
+#### 現在設定している動画IDの取得
+shuvi.getVideoID()
+- [return]video_id: 動画ID
+
+#### 動画の変更
+shuvi.change(video_id)
+- [param]video_id: 動画ID
 
 #### 再生
 shuvi.play()
 
 #### 停止
 shuvi.pause()
-
-#### 次の動画へ
-shuvi.next()
-
-#### 後ろの動画へ
-shuvi.back()
-
-#### プレイリスト内の指定の動画を選択
-shuvi.select(num)
-- [param]num: プレイリストの番号
 
 #### ループの有無
 shuvi.loop(bool)
