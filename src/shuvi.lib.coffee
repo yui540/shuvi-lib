@@ -41,10 +41,9 @@ class Shuvi
 		@listeners = []
 
 		# player object
-		self    = @
 		@player = null
-		window.onYouTubeIframeAPIReady = ->
-			self.render()
+		window.onYouTubeIframeAPIReady = =>
+			@render()
 
 		# 埋め込み
 		@init()
