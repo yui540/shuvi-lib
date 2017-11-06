@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello, shuvi-lib</title>
+  </head>
+  <body>
+    <div id="player"></div>
+    <script src="../lib/shuvi-lib.min.js"></script>
+    <script>
+    const video_id = Shuvi.getVideoId('https://www.youtube.com/watch?v=QHFif7LRylw');
+    const shuvi = new Shuvi({
+      ele: document.getElementById('player'),
+      video_id: video_id,
+      width: 500,
+      height: 300
+    });
+    </script>
+  </body>
+</html>
